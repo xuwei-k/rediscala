@@ -10,24 +10,3 @@ case class Auth[V](value: V)(implicit convert: ByteStringSerializer[V]) extends 
 
   def decodeReply(s: Status) = s
 }
-
-case class Echo[V, R](value: V)(implicit convert: ByteStringSerializer[V], deserializerR : ByteStringDeserializer[R]) extends RedisCommandBulkOptionByteString[R] {
-  val isMasterOnly = true
-  val encodedRequest: ByteString = encode("ECHO", Seq(convert.serialize(value)))
-  val deserializer: ByteStringDeserializer[R] = deserializerR
-}
-
-case object Ping extends RedisCommandStatusString {
-  val isMasterOnly = true
-  val encodedRequest: ByteString = encode("PING")
-}
-
-case object Quit extends RedisCommandStatusBoolean {
-  val isMasterOnly = true
-  val encodedRequest: ByteString = encode("QUIT")
-}
-
-case class Select(index: Int) extends RedisCommandStatusBoolean {
-  val isMasterOnly = true
-  val encodedRequest: ByteString = encode("SELECT", Seq(ByteString(index.toString)))
-}

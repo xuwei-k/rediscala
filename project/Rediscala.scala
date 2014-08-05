@@ -8,14 +8,13 @@ import sbt.Tests.{InProcess, Group}
 
 object Resolvers {
   val typesafe = Seq(
-    "Typesafe repository snapshots" at "http://repo.typesafe.com/typesafe/snapshots/",
     "Typesafe repository releases" at "http://repo.typesafe.com/typesafe/releases/"
   )
   val resolversList = typesafe
 }
 
 object Dependencies {
-  val akkaVersion = "2.3.2"
+  val akkaVersion = "2.3.4"
 
   import sbt._
 
@@ -25,13 +24,9 @@ object Dependencies {
 
   val specs2 = "org.specs2" %% "specs2" % "2.3.11"
 
-  //val scalameter = "com.github.axel22" %% "scalameter" % "0.4"
-
-
   val rediscalaDependencies = Seq(
     akkaActor,
     akkaTestkit % "test",
-    //scalameter % "test",
     specs2 % "test"
   )
 }
@@ -46,8 +41,8 @@ object RediscalaBuild extends Build {
       name := "rediscala",
       version := v,
       organization := "com.etaty.rediscala",
-      scalaVersion := "2.10.4",
-      crossScalaVersions := Seq("2.11.0", "2.10.4"),
+      scalaVersion := "2.11.2",
+      crossScalaVersions := scalaVersion.value :: "2.10.4" :: Nil,
       licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0.html")),
       resolvers ++= Resolvers.resolversList,
 
@@ -74,9 +69,6 @@ object RediscalaBuild extends Build {
 
   lazy val benchTestSettings = inConfig(BenchTest)(Defaults.testSettings ++ Seq(
     sourceDirectory in BenchTest <<= baseDirectory / "src/benchmark",
-    //testOptions in BenchTest += Tests.Argument("-preJDK7"),
-    testFrameworks in BenchTest := Seq(new TestFramework("org.scalameter.ScalaMeterFramework")),
-
     //https://github.com/sbt/sbt/issues/539 => bug fixed in sbt 0.13.x
     testGrouping in BenchTest <<= definedTests in BenchTest map partitionTests
   ))
@@ -86,8 +78,6 @@ object RediscalaBuild extends Build {
     settings = standardSettings ++ Seq(
       libraryDependencies ++= Dependencies.rediscalaDependencies
     )
-      ++ ScoverageSbtPlugin.instrumentSettings
-      ++ CoverallsPlugin.coverallsSettings
   ).configs(BenchTest)
     //.settings(benchTestSettings: _* )
 
