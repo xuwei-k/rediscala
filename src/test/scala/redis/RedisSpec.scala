@@ -1,6 +1,6 @@
 package redis
 
-import org.specs2.mutable.{SpecificationLike, Tags}
+import org.specs2.mutable.{SpecificationLike}
 import akka.util.Timeout
 import org.specs2.time.NoTimeConversions
 import akka.testkit.TestKit
@@ -11,7 +11,7 @@ import scala.util.Try
 import scala.reflect.io.File
 import scala.sys.process._
 
-abstract class RedisHelper extends TestKit(ActorSystem()) with SpecificationLike with Tags with NoTimeConversions {
+abstract class RedisHelper extends TestKit(ActorSystem()) with SpecificationLike with NoTimeConversions {
 
   import scala.concurrent.duration._
 

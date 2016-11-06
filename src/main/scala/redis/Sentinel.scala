@@ -174,7 +174,7 @@ abstract class SentinelMonitored(system: ActorSystem, redisDispatcher: RedisDisp
   def withMasterAddr[T](initFunction: (String, Int) => T): T = {
     import scala.concurrent.duration._
 
-    val f = sentinelClients.values.map(_.getMasterAddr(master))
+    val f: List[Future[Option[(String, Int)]]] = sentinelClients.values.map(_.getMasterAddr(master))(collection.breakOut)
     val ff = Future.find(f) { case Some((_: String, _: Int)) => true case _ => false }
       .map {
         case Some(Some((ip: String, port: Int))) => initFunction(ip, port)

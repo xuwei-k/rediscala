@@ -5,6 +5,7 @@ import com.typesafe.sbt.SbtGhPages.GhPagesKeys._
 import com.typesafe.sbt.SbtGit.{GitKeys => git}
 import com.typesafe.sbt.SbtSite._
 import com.typesafe.sbt.SbtSite.SiteKeys.siteMappings
+import scoverage.ScoverageKeys.coverageEnabled
 import sbt.LocalProject
 import sbt.Tests.{InProcess, Group}
 
@@ -17,29 +18,36 @@ object Resolvers {
 }
 
 object Dependencies {
-  val akkaVersion = "2.3.6"
+  val akkaVersion = Def.setting {
+    CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((2, n)) if n <= 11 =>
+        "2.3.6"
+      case _ =>
+        "2.4.12"
+    }
+  }
 
   import sbt._
 
-  val akkaActor = "com.typesafe.akka" %% "akka-actor" % akkaVersion
+  val akkaActor = Def.setting("com.typesafe.akka" %% "akka-actor" % akkaVersion.value)
 
-  val akkaTestkit = "com.typesafe.akka" %% "akka-testkit" % akkaVersion
+  val akkaTestkit = Def.setting("com.typesafe.akka" %% "akka-testkit" % akkaVersion.value)
 
-  val specs2 = "org.specs2" %% "specs2" % "2.3.13"
+  val specs2 = "org.specs2" %% "specs2-core" % "3.8.6"
 
   val stm = "org.scala-stm" %% "scala-stm" % "0.7"
 
-  val scalacheck = "org.scalacheck" %% "scalacheck" % "1.12.5"
+  val scalacheck = "org.scalacheck" %% "scalacheck" % "1.13.4"
 
   //val scalameter = "com.github.axel22" %% "scalameter" % "0.4"
 
-  val rediscalaDependencies = Seq(
-    akkaActor,
-    akkaTestkit % "test",
+  val rediscalaDependencies = Def.setting(Seq(
+    akkaActor.value,
+    akkaTestkit.value % "test",
     //scalameter % "test",
     specs2 % "test",
     scalacheck % "test"
-  )
+  ))
 }
 
 object RediscalaBuild extends Build {
@@ -69,6 +77,14 @@ object RediscalaBuild extends Build {
 
       publishMavenStyle := true,
       git.gitRemoteRepo := "git@github.com:etaty/rediscala.git",
+
+      // TODO https://github.com/scoverage/scalac-scoverage-plugin/issues/192
+      coverageEnabled := {
+        CrossVersion.partialVersion(scalaVersion.value) match {
+          case Some((2, n)) if n >= 12 => false
+          case _ => coverageEnabled.value
+        }
+      },
 
       scalacOptions ++= Seq(
         "-encoding", "UTF-8",
@@ -133,7 +149,7 @@ object RediscalaBuild extends Build {
   lazy val root = Project(id = "rediscala",
     base = file("."),
     settings = standardSettings ++ Seq(
-      libraryDependencies ++= Dependencies.rediscalaDependencies
+      libraryDependencies ++= Dependencies.rediscalaDependencies.value
     )
   ).configs(BenchTest)
     //.settings(benchTestSettings: _* )

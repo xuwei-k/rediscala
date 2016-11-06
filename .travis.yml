@@ -1,18 +1,10 @@
 sudo: false
 language: scala
-script: "sbt clean coverage test"
-after_script:
-  - "sbt coveralls"
+script: "sbt test"
 scala:
   - "2.11.7"
+  - "2.12.0"
 jdk:
-  - oraclejdk7
-  - openjdk7
+  - oraclejdk8
 services:
   - redis
-env:
-  - SBT_OPTS="-XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:PermSize=256M -XX:MaxPermSize=512M"
-# whitelist
-branches:
-  only:
-    - master
