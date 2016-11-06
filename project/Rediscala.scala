@@ -35,7 +35,6 @@ object Dependencies {
 
   val rediscalaDependencies = Seq(
     akkaActor,
-    stm,
     akkaTestkit % "test",
     //scalameter % "test",
     specs2 % "test",

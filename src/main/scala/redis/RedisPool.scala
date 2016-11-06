@@ -4,11 +4,11 @@ import java.net.InetSocketAddress
 
 import akka.actor.{Props, ActorRef, ActorSystem}
 
-import scala.concurrent.stm._
 import redis.actors.RedisClientActor
 import scala.concurrent.{Future, ExecutionContext}
 import redis.protocol.RedisReply
 import redis.commands.Transactions
+import java.util.concurrent.atomic.{AtomicBoolean, AtomicReference}
 
 case class RedisServer(host: String = "localhost",
                        port: Int = 6379,
@@ -16,7 +16,7 @@ case class RedisServer(host: String = "localhost",
                        db: Option[Int] = None)
 
 
-case class RedisConnection(actor: ActorRef, active: Ref[Boolean] = Ref(false))
+case class RedisConnection(actor: ActorRef, active: AtomicBoolean = new AtomicBoolean(false))
 
 abstract class RedisClientPoolLike(system: ActorSystem, redisDispatcher: RedisDispatcher) extends RoundRobinPoolRequest {
 
@@ -25,16 +25,16 @@ abstract class RedisClientPoolLike(system: ActorSystem, redisDispatcher: RedisDi
   val name: String
   implicit val executionContext = system.dispatchers.lookup(redisDispatcher.name)
 
-  val redisConnectionRef: Ref[Seq[ActorRef]] = Ref(Seq.empty)
+  val redisConnectionRef: AtomicReference[Seq[ActorRef]] = new AtomicReference(Seq.empty)
 
   def getConnectionsActive: Seq[ActorRef] = {
     redisServerConnections.collect {
-      case (redisServer, redisConnection) if redisConnection.active.single.get => redisConnection.actor
+      case (redisServer, redisConnection) if redisConnection.active.get => redisConnection.actor
     }.toVector
   }
 
   def redisConnectionPool: Seq[ActorRef] = {
-    redisConnectionRef.single.get
+    redisConnectionRef.get
   }
 
   def onConnect(redis: RedisCommands, server: RedisServer): Unit = {
@@ -42,15 +42,15 @@ abstract class RedisClientPoolLike(system: ActorSystem, redisDispatcher: RedisDi
     server.db.foreach(redis.select)
   }
 
-  def onConnectStatus(server: RedisServer, active: Ref[Boolean]): (Boolean) => Unit = (status: Boolean) => {
-    if (active.single.compareAndSet(!status, status)) {
+  def onConnectStatus(server: RedisServer, active: AtomicBoolean): (Boolean) => Unit = (status: Boolean) => {
+    if (active.compareAndSet(!status, status)) {
       refreshConnections()
     }
   }
 
-  def refreshConnections() = {
+  def refreshConnections(): Unit = {
     val actives = getConnectionsActive
-    redisConnectionRef.single.set(actives)
+    redisConnectionRef.set(actives)
   }
 
   def getConnectOperations(server: RedisServer): () => Seq[Operation[_, _]] = () => {
@@ -72,11 +72,11 @@ abstract class RedisClientPoolLike(system: ActorSystem, redisDispatcher: RedisDi
   }
 
   def makeRedisConnection(server: RedisServer, defaultActive: Boolean = false) = {
-    val active = Ref(defaultActive)
+    val active = new AtomicBoolean(defaultActive)
     (server, RedisConnection(makeRedisClientActor(server, active), active))
   }
 
-  def makeRedisClientActor(server: RedisServer, active: Ref[Boolean]): ActorRef = {
+  def makeRedisClientActor(server: RedisServer, active: AtomicBoolean): ActorRef = {
     system.actorOf(
       Props(classOf[RedisClientActor], new InetSocketAddress(server.host, server.port),
         getConnectOperations(server), onConnectStatus(server, active), redisDispatcher.name)
