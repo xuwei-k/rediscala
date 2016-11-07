@@ -3,8 +3,9 @@ package redis
 import scala.concurrent._
 import scala.concurrent.duration._
 import akka.testkit._
+import org.specs2.matcher.FutureMatchers
 
-class SentinelSpec extends RedisSentinelClients("SentinelSpec") {
+class SentinelSpec extends RedisSentinelClients("SentinelSpec") with FutureMatchers {
 
   sequential
 

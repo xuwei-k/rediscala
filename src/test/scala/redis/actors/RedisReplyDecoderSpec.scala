@@ -1,7 +1,7 @@
 package redis.actors
 
 import akka.actor._
-import org.specs2.mutable.{Tags, SpecificationLike}
+import org.specs2.mutable.{SpecificationLike}
 import org.specs2.time.NoTimeConversions
 import akka.util.ByteString
 import redis.api.hashes.Hgetall
@@ -16,7 +16,7 @@ import akka.testkit._
 
 class RedisReplyDecoderSpec
   extends TestKit(ActorSystem("testsystem", ConfigFactory.parseString( """akka.loggers = ["akka.testkit.TestEventListener"]""")))
-  with SpecificationLike with Tags with NoTimeConversions with ImplicitSender {
+  with SpecificationLike with NoTimeConversions with ImplicitSender {
 
   import scala.concurrent.duration._
 

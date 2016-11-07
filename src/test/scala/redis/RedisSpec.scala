@@ -5,11 +5,12 @@ import java.net.Socket
 import java.nio.file.{Files, Path}
 import java.util.concurrent.TimeUnit
 
-import org.specs2.mutable.{SpecificationLike, Tags}
+import org.specs2.mutable.SpecificationLike
 import akka.util.Timeout
 import org.specs2.time.NoTimeConversions
 import akka.testkit.TestKit
-import org.specs2.specification.{Fragments, Step}
+import org.specs2.specification.Step
+import org.specs2.specification.core.Fragments
 import akka.actor.ActorSystem
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -46,7 +47,7 @@ object RedisServerHelper {
 }
 
 
-abstract class RedisHelper extends TestKit(ActorSystem()) with SpecificationLike with Tags with NoTimeConversions {
+abstract class RedisHelper extends TestKit(ActorSystem()) with SpecificationLike with NoTimeConversions {
 
   import scala.concurrent.duration._
 

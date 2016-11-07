@@ -18,6 +18,7 @@ object Resolvers {
 
 object Dependencies {
   val akkaVersion = "2.3.6"
+  val specs2Version = "3.8.6"
 
   import sbt._
 
@@ -25,11 +26,13 @@ object Dependencies {
 
   val akkaTestkit = "com.typesafe.akka" %% "akka-testkit" % akkaVersion
 
-  val specs2 = "org.specs2" %% "specs2" % "2.3.13"
+  val specs2core = "org.specs2" %% "specs2-core" % specs2Version
+
+  val specs2matcher = "org.specs2" %% "specs2-matcher" % specs2Version
 
   val stm = "org.scala-stm" %% "scala-stm" % "0.7"
 
-  val scalacheck = "org.scalacheck" %% "scalacheck" % "1.12.5"
+  val scalacheck = "org.scalacheck" %% "scalacheck" % "1.13.4"
 
   //val scalameter = "com.github.axel22" %% "scalameter" % "0.4"
 
@@ -38,7 +41,8 @@ object Dependencies {
     stm,
     akkaTestkit % "test",
     //scalameter % "test",
-    specs2 % "test",
+    specs2core % "test",
+    specs2matcher % "test",
     scalacheck % "test"
   )
 }
