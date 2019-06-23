@@ -44,7 +44,7 @@ class ParseParse extends Specification {
     }
 
     "multibulk" in {
-      val multibulkString0 = ByteString()
+      ByteString()
 
       val multibulkString = ByteString("*4\r\n$3\r\nfoo\r\n$3\r\nbar\r\n$5\r\nHello\r\n$5\r\nWorld\r\n")
 
