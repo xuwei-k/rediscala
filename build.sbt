@@ -1,7 +1,7 @@
 import com.typesafe.sbt.SbtGit.{GitKeys => git}
 import sbt.Tests.{InProcess, Group}
 
-val akkaVersion = "2.5.25"
+val akkaVersion = "2.5.26"
 
 val akkaActor = "com.typesafe.akka" %% "akka-actor" % akkaVersion
 
