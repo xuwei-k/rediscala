@@ -34,8 +34,10 @@ jobs:
     - uses: coursier/cache-action@v6
     - run: ./install-redis.sh
     - run: sbt scalafmtSbtCheck "project rediscala-${{ matrix.project }}" scalafmtCheckAll Test/compile
+    - run: ./collect-docker-stats.sh &
     - uses: nick-invision/retry@v3
       with:
         timeout_minutes: 20
         max_attempts: 3
         command: sbt "project rediscala-${{ matrix.project }}" "onFailure testQuick" test
+    - run: cat docker-stats >> $GITHUB_STEP_SUMMARY
