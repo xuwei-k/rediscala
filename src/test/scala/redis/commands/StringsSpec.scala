@@ -71,7 +71,7 @@ class StringsSpec extends RedisDockerServer {
         v4 <- redis.bitpos("bitposKey", 0, 3)
         v5 <- redis.bitpos("bitposKey", 0, 1, 2)
       } yield {
-        assert(s1)
+        assert(s1 == Some("OK"))
         assert(v1 == 0)
         assert(v2 == 1)
         assert(v3 == 10)
@@ -290,16 +290,16 @@ class StringsSpec extends RedisDockerServer {
         xx <- redis.set("setKey", "value", XX = true)
         nxFalse <- redis.set("setKey", "value", NX = true)
       } yield {
-        assert(r)
-        assert(ex)
-        assert(nxex)
+        assert(r == Some("OK"))
+        assert(ex == Some("OK"))
+        assert(nxex == Some("OK"))
         assert((0 <= ttlnxex) && (ttlnxex <= 60))
-        assert(xxex)
+        assert(xxex == Some("OK"))
         assert((60 <= ttlxxex) && (ttlxxex <= 180))
-        assert(px)
-        assert(nxTrue) // because pxMilliseconds = 1 millisecond
-        assert(xx)
-        assert(nxFalse == false)
+        assert(px == Some("OK"))
+        assert(nxTrue == Some("OK")) // because pxMilliseconds = 1 millisecond
+        assert(xx == Some("OK"))
+        assert(nxFalse == None)
       }
       Await.result(rr, timeOut)
     }

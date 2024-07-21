@@ -82,8 +82,8 @@ trait Strings extends Request {
     exSeconds: Option[Long] = None,
     pxMilliseconds: Option[Long] = None,
     NX: Boolean = false,
-    XX: Boolean = false
-  ): Future[Boolean] = {
+    XX: Boolean = false,
+  ): Future[Option[String]] = {
     send(Set(key, value, exSeconds, pxMilliseconds, NX, XX))
   }
 

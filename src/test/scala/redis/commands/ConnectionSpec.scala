@@ -42,9 +42,9 @@ class ConnectionSpec extends RedisDockerServer {
     }
     "SWAPDB" in {
       assert(Await.result(redis.select(0), timeOut))
-      assert(Await.result(redis.set("key1", "value1"), timeOut))
+      assert(Await.result(redis.set("key1", "value1"), timeOut) == Some("OK"))
       assert(Await.result(redis.select(1), timeOut))
-      assert(Await.result(redis.set("key2", "value2"), timeOut))
+      assert(Await.result(redis.set("key2", "value2"), timeOut) == Some("OK"))
       assert(Await.result(redis.swapdb(0, 1), timeOut))
       assert(Await.result(redis.get("key1"), timeOut) == Some(ByteString("value1")))
       assert(Await.result(redis.select(0), timeOut))

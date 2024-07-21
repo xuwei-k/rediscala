@@ -11,7 +11,7 @@ class RedisTest extends RedisDockerServer {
       assert(Await.result(redis.ping(), timeOut) == "PONG")
     }
     "set" in {
-      assert(Await.result(redis.set("key", "value"), timeOut))
+      assert(Await.result(redis.set("key", "value"), timeOut) == Some("OK"))
     }
     "get" in {
       assert(Await.result(redis.get("key"), timeOut) == Some(ByteString("value")))

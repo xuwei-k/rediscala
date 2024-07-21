@@ -23,7 +23,7 @@ class TransactionsSpec extends RedisDockerServer {
         s <- set
         g <- get
       } yield {
-        assert(s)
+        assert(s == Some("OK"))
         assert(g == Some(ByteString("abc")))
       }
       assert(intercept[ReplyErrorException] { Await.result(decr, timeOut) }.getMessage == "ERR value is not an integer or out of range")
@@ -58,7 +58,7 @@ class TransactionsSpec extends RedisDockerServer {
         val r = for {
           s <- set
         } yield {
-          assert(s)
+          assert(s == Some("OK"))
         }
         Await.result(r, timeOut)
       }

@@ -159,7 +159,7 @@ case class Set[K, V](key: K, value: V, exSeconds: Option[Long] = None, pxMillise
   redisKey: ByteStringSerializer[K],
   convert: ByteStringSerializer[V]
 ) extends SimpleClusterKey[K]
-    with RedisCommandRedisReply[Boolean] {
+    with RedisCommandRedisReply[Option[String]] {
   def isMasterOnly = true
   val encodedRequest: ByteString = {
     val builder = Seq.newBuilder[ByteString]
@@ -171,6 +171,8 @@ case class Set[K, V](key: K, value: V, exSeconds: Option[Long] = None, pxMillise
       builder += ByteString("NX")
     else if (XX)
       builder += ByteString("XX")
+
+    builder += ByteString("GET")
 
     if (exSeconds.isDefined) {
       builder += ByteString("EX")
@@ -184,8 +186,8 @@ case class Set[K, V](key: K, value: V, exSeconds: Option[Long] = None, pxMillise
   }
 
   def decodeReply(redisReply: RedisReply) = redisReply match {
-    case s: Status => s.toBoolean
-    case _ => false
+    case s => Some(s.toByteString.utf8String)
+    case _ => None
   }
 }
 

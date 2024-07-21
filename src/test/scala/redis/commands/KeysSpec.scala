@@ -14,7 +14,7 @@ class KeysSpec extends RedisStandaloneServer {
         s <- redis.set("delKey", "value")
         d <- redis.del("delKey", "delKeyNonexisting")
       } yield {
-        assert(s)
+        assert(s == Some("OK"))
         assert(d == 1)
       }
       Await.result(r, timeOut)
@@ -24,7 +24,7 @@ class KeysSpec extends RedisStandaloneServer {
         s <- redis.set("dumpKey", "value")
         d <- redis.dump("dumpKey")
       } yield {
-        assert(s)
+        assert(s == Some("OK"))
         assert(d == Some(ByteString(0, 5, 118, 97, 108, 117, 101, 9, 0, 81, 4, -112, -12, -107, 44, -8, -33)))
       }
       Await.result(r, timeOut)
@@ -36,7 +36,7 @@ class KeysSpec extends RedisStandaloneServer {
         e <- redis.exists("existsKey")
         e2 <- redis.exists("existsKeyNonexisting")
       } yield {
-        assert(s)
+        assert(s == Some("OK"))
         assert(e)
         assert(e2 == false)
       }
@@ -49,7 +49,7 @@ class KeysSpec extends RedisStandaloneServer {
         e <- redis.existsMany("existsKey", "existsKeyNonexisting")
         e2 <- redis.existsMany("existsKeyNonexisting")
       } yield {
-        assert(s)
+        assert(s == Some("OK"))
         assert(e == 1)
         assert(e2 == 0)
       }
@@ -66,7 +66,7 @@ class KeysSpec extends RedisStandaloneServer {
           redis.get("expireKey")
         }
       } yield {
-        assert(s)
+        assert(s == Some("OK"))
         assert(e)
         assert(e2 == false)
         assert(expired == None)
@@ -80,7 +80,7 @@ class KeysSpec extends RedisStandaloneServer {
         e <- redis.expireat("expireatKey", System.currentTimeMillis() / 1000)
         expired <- redis.get("expireatKey")
       } yield {
-        assert(s)
+        assert(s == Some("OK"))
         assert(e)
         assert(expired == None)
       }
@@ -246,7 +246,7 @@ class KeysSpec extends RedisStandaloneServer {
         p <- redis.persist("persistKey")
         ttl2 <- redis.ttl("persistKey")
       } yield {
-        assert(s)
+        assert(s == Some("OK"))
         assert(e)
         assert((1 <= ttl.toInt) && (ttl.toInt <= 10))
         assert(p)
@@ -265,7 +265,7 @@ class KeysSpec extends RedisStandaloneServer {
           redis.get("pexpireKey")
         }
       } yield {
-        assert(s)
+        assert(s == Some("OK"))
         assert(e)
         assert(e2 == false)
         assert(expired == None)
@@ -279,7 +279,7 @@ class KeysSpec extends RedisStandaloneServer {
         e <- redis.pexpireat("pexpireatKey", System.currentTimeMillis())
         expired <- redis.get("pexpireatKey")
       } yield {
-        assert(s)
+        assert(s == Some("OK"))
         assert(e)
         assert(expired == None)
       }
@@ -292,7 +292,7 @@ class KeysSpec extends RedisStandaloneServer {
         e <- redis.expire("pttlKey", 1)
         pttl <- redis.pttl("pttlKey")
       } yield {
-        assert(s)
+        assert(s == Some("OK"))
         assert(e)
         assert((1 <= pttl) && (pttl <= 1000))
       }
@@ -316,7 +316,7 @@ class KeysSpec extends RedisStandaloneServer {
         rename <- redis.rename("renameKey", "renameNewKey")
         renamedValue <- redis.get("renameNewKey")
       } yield {
-        assert(s)
+        assert(s == Some("OK"))
         assert(rename)
         assert(renamedValue == Some(ByteString("value")))
       }
@@ -333,7 +333,7 @@ class KeysSpec extends RedisStandaloneServer {
         rename2 <- redis.renamenx("renamenxKey", "renamenxNewKey")
         renamedValue <- redis.get("renamenxNewKey")
       } yield {
-        assert(s)
+        assert(s == Some("OK"))
         assert(rename == false)
         assert(rename2)
         assert(renamedValue == Some(ByteString("value")))
@@ -348,7 +348,7 @@ class KeysSpec extends RedisStandaloneServer {
         _ <- redis.del("restoreKey")
         restore <- redis.restore("restoreKey", serializedValue = dump.get)
       } yield {
-        assert(s)
+        assert(s == Some("OK"))
         assert(dump == Some(ByteString(0, 5, 118, 97, 108, 117, 101, 9, 0, 81, 4, -112, -12, -107, 44, -8, -33)))
         assert(restore)
       }
@@ -424,7 +424,7 @@ class KeysSpec extends RedisStandaloneServer {
         e <- redis.expire("ttlKey", 10)
         ttl <- redis.ttl("ttlKey")
       } yield {
-        assert(s)
+        assert(s == Some("OK"))
         assert(e)
         assert((1 <= ttl.toInt) && (ttl.toInt <= 10))
       }
@@ -437,7 +437,7 @@ class KeysSpec extends RedisStandaloneServer {
         _type <- redis.`type`("typeKey")
         _typeNone <- redis.`type`("typeKeyNonExisting")
       } yield {
-        assert(s)
+        assert(s == Some("OK"))
         assert(_type == "string")
         assert(_typeNone == "none")
       }
@@ -449,7 +449,7 @@ class KeysSpec extends RedisStandaloneServer {
         s <- redis.set("unlinkKey", "value")
         d <- redis.unlink("unlinkKey", "unlinkKeyNonexisting")
       } yield {
-        assert(s)
+        assert(s == Some("OK"))
         assert(d == 1)
       }
       Await.result(r, timeOut)
