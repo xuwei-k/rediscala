@@ -8,7 +8,7 @@ abstract class RedisDockerServer extends RedisHelper with BeforeAndAfterAll {
 
   private def exportPort = 6379
   private val container = GenericContainer(
-    dockerImage = "redis:6.2.18",
+    dockerImage = "redis:8.0.1",
     exposedPorts = Seq(exportPort)
   )
 
