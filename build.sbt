@@ -51,6 +51,7 @@ lazy val standardSettings = Def.settings(
     }
   },
   scalacOptions ++= Seq(
+    "-language:strictEquality",
     "-Wunused:imports",
     "-encoding",
     "UTF-8",

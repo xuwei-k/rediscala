@@ -4,7 +4,7 @@ package redis.api.geo
   * Created by avilevi on 08/12/2016.
   */
 object GeoOptions {
-  sealed trait WithOption extends Product with Serializable {
+  sealed trait WithOption extends Product with Serializable derives CanEqual {
     def value: String = {
       this match {
         case WithDist => "WITHDIST"

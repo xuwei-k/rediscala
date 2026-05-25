@@ -15,9 +15,10 @@ abstract class RedisWorkerIO(val address: InetSocketAddress, onConnectStatus: Bo
     extends Actor
     with ActorLogging {
 
-  private var currAddress = address
-
+  import redis.actors.RedisWorkerIO.given
   import context.*
+
+  private var currAddress = address
 
   val tcp: ActorRef = IO(Tcp)(using context.system)
 
@@ -182,4 +183,15 @@ abstract class RedisWorkerIO(val address: InetSocketAddress, onConnectStatus: Bo
     readyToWrite = false
   }
 
+}
+
+object RedisWorkerIO {
+  private given CanEqual[ActorRef, ActorRef] =
+    CanEqual.derived
+
+  private given [A]: CanEqual[Reconnect.type, A] =
+    CanEqual.derived
+
+  private given [A]: CanEqual[WriteAck.type, A] =
+    CanEqual.derived
 }

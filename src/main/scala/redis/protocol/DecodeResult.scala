@@ -2,7 +2,7 @@ package redis.protocol
 
 import org.apache.pekko.util.ByteString
 
-sealed trait DecodeResult[+A] {
+sealed trait DecodeResult[+A] derives CanEqual {
   def rest: ByteString
 
   def isFullyDecoded: Boolean

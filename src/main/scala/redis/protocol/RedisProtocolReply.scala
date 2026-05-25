@@ -6,7 +6,7 @@ import scala.annotation.tailrec
 import scala.collection.mutable
 import scala.util.Try
 
-sealed trait RedisReply extends Product with Serializable {
+sealed trait RedisReply extends Product with Serializable derives CanEqual {
   def toByteString: ByteString
 
   def asOptByteString: Option[ByteString]

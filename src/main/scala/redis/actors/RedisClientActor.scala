@@ -11,6 +11,8 @@ import scala.collection.mutable
 import scala.concurrent.duration.FiniteDuration
 
 object RedisClientActor {
+  private given [A]: CanEqual[KillOldRepliesDecoder.type, A] =
+    CanEqual.derived
 
   def props(
     address: InetSocketAddress,
@@ -30,6 +32,7 @@ class RedisClientActor(
   connectTimeout: Option[FiniteDuration] = None
 ) extends RedisWorkerIO(address, onConnectStatus, connectTimeout) {
 
+  import RedisClientActor.given
   import context.*
 
   private var repliesDecoder = initRepliesDecoder()

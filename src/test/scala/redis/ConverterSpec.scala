@@ -5,7 +5,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import redis.protocol.Bulk
 import redis.protocol.RedisReply
 
-case class DumbClass(s1: String, s2: String)
+case class DumbClass(s1: String, s2: String) derives CanEqual
 
 object DumbClass {
   given byteStringFormatter: ByteStringFormatter[DumbClass] = new ByteStringFormatter[DumbClass] {
